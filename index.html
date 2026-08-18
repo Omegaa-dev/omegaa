@@ -187,7 +187,7 @@
 
   function initParticles(){
     // more particles, original speed
-    const density = Math.min(130, Math.floor((w * h) / 11000));
+    const density = Math.min(115, Math.floor((w * h) / 12500));
     particles = [];
     for (let i = 0; i < density; i++){
       particles.push({
@@ -297,9 +297,9 @@
       const rect = wrap.getBoundingClientRect();
       const px = (e.clientX - rect.left) / rect.width;
       const py = (e.clientY - rect.top) / rect.height;
-      // very subtle tilt (~3.5deg max)
-      targetX = (0.5 - py) * 7;
-      targetY = (px - 0.5) * 7;
+      // very subtle tilt (~2.5deg max)
+      targetX = (0.5 - py) * 5;
+      targetY = (px - 0.5) * 5;
     }
 
     function onLeave(){
