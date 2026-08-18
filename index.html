@@ -62,10 +62,10 @@
     will-change:transform;
   }
   .avatar-wrap:hover .avatar{
-    border-color:rgba(255,255,255,0.22);
+    border-color:rgba(255,255,255,0.18);
     box-shadow:
-      0 0 0 7px rgba(255,255,255,0.07),
-      0 6px 20px rgba(0,0,0,0.25);
+      0 0 0 6px rgba(255,255,255,0.06),
+      0 4px 14px rgba(0,0,0,0.2);
   }
 
   .name{font-family:'Nunito',sans-serif;font-size:clamp(46px,11vw,72px);font-weight:900;line-height:.95;letter-spacing:-.04em;color:var(--white);}
@@ -187,7 +187,7 @@
 
   function initParticles(){
     // more particles, original speed
-    const density = Math.min(150, Math.floor((w * h) / 9500));
+    const density = Math.min(130, Math.floor((w * h) / 11000));
     particles = [];
     for (let i = 0; i < density; i++){
       particles.push({
@@ -297,9 +297,9 @@
       const rect = wrap.getBoundingClientRect();
       const px = (e.clientX - rect.left) / rect.width;
       const py = (e.clientY - rect.top) / rect.height;
-      // very subtle tilt (~5deg max)
-      targetX = (0.5 - py) * 10;
-      targetY = (px - 0.5) * 10;
+      // very subtle tilt (~3.5deg max)
+      targetX = (0.5 - py) * 7;
+      targetY = (px - 0.5) * 7;
     }
 
     function onLeave(){
