@@ -45,8 +45,28 @@
   /* page */
   .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px 40px;gap:28px;text-align:center;}
 
-  .avatar-wrap{position:relative;display:inline-block;}
-  .avatar{width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;border:1px solid var(--border);box-shadow:0 0 0 6px rgba(255,255,255,0.05);}
+  .avatar-wrap{
+    position:relative;
+    display:inline-block;
+    perspective:900px;
+  }
+  .avatar{
+    width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;
+    border:1px solid var(--border);
+    box-shadow:0 0 0 6px rgba(255,255,255,0.05);
+    transition:
+      transform 0.25s ease-out,
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
+    transform-style:preserve-3d;
+    will-change:transform;
+  }
+  .avatar-wrap:hover .avatar{
+    border-color:rgba(255,255,255,0.22);
+    box-shadow:
+      0 0 0 7px rgba(255,255,255,0.07),
+      0 6px 20px rgba(0,0,0,0.25);
+  }
 
   .name{font-family:'Nunito',sans-serif;font-size:clamp(46px,11vw,72px);font-weight:900;line-height:.95;letter-spacing:-.04em;color:var(--white);}
   .bio{margin-top:10px;font-size:14px;font-weight:600;color:var(--mid);letter-spacing:-.01em;}
@@ -166,7 +186,8 @@
   }
 
   function initParticles(){
-    const density = Math.min(90, Math.floor((w * h) / 16000));
+    // more particles, original speed
+    const density = Math.min(150, Math.floor((w * h) / 9500));
     particles = [];
     for (let i = 0; i < density; i++){
       particles.push({
@@ -179,7 +200,7 @@
     }
   }
 
-  const LINK_DIST = 150;
+  const LINK_DIST = 155;
   const MOUSE_DIST = 190;
 
   function step(){
@@ -216,7 +237,7 @@
         const dx = a.x - b.x, dy = a.y - b.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
         if (dist < LINK_DIST){
-          const op = (1 - dist / LINK_DIST) * 0.16;
+          const op = (1 - dist / LINK_DIST) * 0.17;
           ctx.strokeStyle = 'rgba(255,255,255,' + op + ')';
           ctx.lineWidth = 1;
           ctx.beginPath();
@@ -259,6 +280,57 @@
     if (e.touches[0]){ mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.active = true; }
   }, {passive:true});
   window.addEventListener('touchend', () => { mouse.active = false; });
+
+  // organic 3D tilt on avatar (mouse-follow, not generic)
+  (function(){
+    const wrap = document.querySelector('.avatar-wrap');
+    const img = document.querySelector('.avatar');
+    if (!wrap || !img || reduceMotion) return;
+
+    let raf = null;
+    let currentX = 0, currentY = 0;
+    let targetX = 0, targetY = 0;
+
+    function lerp(a, b, t){ return a + (b - a) * t; }
+
+    function onMove(e){
+      const rect = wrap.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      // very subtle tilt (~5deg max)
+      targetX = (0.5 - py) * 10;
+      targetY = (px - 0.5) * 10;
+    }
+
+    function onLeave(){
+      targetX = 0;
+      targetY = 0;
+    }
+
+    function tick(){
+      currentX = lerp(currentX, targetX, 0.1);
+      currentY = lerp(currentY, targetY, 0.1);
+
+      const settled = Math.abs(currentX) < 0.1 && Math.abs(currentY) < 0.1 &&
+                      targetX === 0 && targetY === 0;
+
+      if (settled) {
+        img.style.transform = '';
+        raf = null;
+        return;
+      }
+
+      img.style.transform =
+        `rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg)`;
+      raf = requestAnimationFrame(tick);
+    }
+
+    wrap.addEventListener('mousemove', onMove);
+    wrap.addEventListener('mouseenter', () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    });
+    wrap.addEventListener('mouseleave', onLeave);
+  })();
 
   resize();
   if (reduceMotion){ step(); } else { requestAnimationFrame(step); }
