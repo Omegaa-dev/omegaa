@@ -51,21 +51,21 @@
     perspective:900px;
   }
   .avatar{
-    width:84px;height:84px;border-radius:50%;object-fit:cover;display:block;
+    width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;
     border:1px solid var(--border);
-    box-shadow:0 0 0 5px rgba(255,255,255,0.045);
+    box-shadow:0 0 0 6px rgba(255,255,255,0.05);
     transition:
-      transform 0.3s ease-out,
+      transform 0.25s ease-out,
       box-shadow 0.35s ease,
       border-color 0.35s ease;
     transform-style:preserve-3d;
     will-change:transform;
   }
   .avatar-wrap:hover .avatar{
-    border-color:rgba(255,255,255,0.15);
+    border-color:rgba(255,255,255,0.18);
     box-shadow:
-      0 0 0 5px rgba(255,255,255,0.06),
-      0 3px 12px rgba(0,0,0,0.18);
+      0 0 0 6px rgba(255,255,255,0.06),
+      0 4px 14px rgba(0,0,0,0.2);
   }
 
   .name{font-family:'Nunito',sans-serif;font-size:clamp(46px,11vw,72px);font-weight:900;line-height:.95;letter-spacing:-.04em;color:var(--white);}
@@ -315,9 +315,9 @@
       const rect = wrap.getBoundingClientRect();
       const px = (e.clientX - rect.left) / rect.width;
       const py = (e.clientY - rect.top) / rect.height;
-      // very subtle tilt (~1.5deg max)
-      targetX = (0.5 - py) * 3;
-      targetY = (px - 0.5) * 3;
+      // very subtle tilt (~2.5deg max)
+      targetX = (0.5 - py) * 5;
+      targetY = (px - 0.5) * 5;
     }
 
     function onLeave(){
